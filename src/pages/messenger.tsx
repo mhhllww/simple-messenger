@@ -10,6 +10,8 @@ import { MessageEntity } from '../types/MessageEntity';
 import lastMessageScroll from '../hooks/scroll-to-last-msg';
 import { NotificationEntity } from '../types/NotificationEntity';
 import { UserContextType } from '../types/UserContextType';
+import RoundedButton from '../components/RoundedButton';
+import { Send } from '../assets/SendIcon';
 
 type PhoneNumber = {
   phone: number;
@@ -67,8 +69,9 @@ const Messenger = () => {
         userData.apiTokenInstance,
       );
 
+      if (!data || !data.receiptId) return;
+
       if (data && data.body.typeWebhook === 'incomingMessageReceived') {
-        // const text = data.body.messageData?.textMessageData?.textMessage;
         const text = data.body.messageData.textMessageData.textMessage;
         const sender = data.body.senderData.senderName;
 
@@ -117,14 +120,11 @@ const Messenger = () => {
           })}
           placeholder={'Enter phone'}
           type="number" />
-        <button
-          className={'bg-white text-green-700 border border-green-500 border-2 rounded-xl p-[10px_50px] hover:bg-green-50 transition duration-100'}>Add
-          chat
-        </button>
+        <RoundedButton text={'Add chat'}/>
       </form>
 
-      <section className={'w-[500px]'}>
-        <div className={'flex flex-col gap-[5px] overflow-auto h-[500px]'}>
+      <section className={'w-[500px] bg-green-100 rounded-2xl'}>
+        <div className={'flex flex-col gap-[5px] overflow-auto  h-[500px]'}>
           {chat &&
             [...chat]
               .reverse()
@@ -146,9 +146,9 @@ const Messenger = () => {
           <button
             onClick={handleSend}
             className={
-              'bg-white text-green-700 border border-green-500 border-2 rounded-full hover:bg-green-50 transition duration-100 w-[40px] h-[40px]'
+              'flex justify-center items-center text-center bg-white text-green-700 border border-green-500 border-1 rounded-full hover:bg-green-50 transition duration-100 w-[40px] h-[40px]'
             }>
-            Send
+            <Send />
           </button>
         </div>
       </section>

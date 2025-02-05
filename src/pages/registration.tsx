@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 
 import UserContext from '../contexts/userContext';
+import RoundedButton from '../components/RoundedButton';
 
 const Registration = () => {
   const { register, handleSubmit } = useForm();
@@ -42,9 +43,7 @@ const Registration = () => {
           type="text"
         />
 
-        <button
-          className={'bg-white text-green-700 border border-green-500 border-2 rounded-xl p-[10px_50px] hover:bg-green-50 transition duration-100'}>Submit
-        </button>
+        <RoundedButton text={'Submit'} />
       </form>
     </main>
   );
