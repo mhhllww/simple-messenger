@@ -1,6 +1,8 @@
 import axios from 'axios';
 
 import API_URL from '../consts/api';
+import { DeleteNotification } from '../types/DeleteNotification';
+import { NotificationEntity } from '../types/NotificationEntity';
 
 type SendMessageParams = {
   chatId: string;
@@ -32,7 +34,7 @@ export const receiveNotification = async (
   apiTokenInstance: string
 ) => {
   try {
-    const response = await axios.get(
+    const response = await axios.get<NotificationEntity>(
       `${API_URL}/waInstance${idInstance}/receiveNotification/${apiTokenInstance}`,
     );
 
@@ -48,7 +50,7 @@ export const deleteNotification = async (
   apiTokenInstance: string
 ) => {
   try {
-    const response = await axios.delete(
+    const response = await axios.delete<DeleteNotification>(
       `${API_URL}/waInstance${idInstance}/deleteNotification/${apiTokenInstance}/${receiptId}`,
     );
 
@@ -58,3 +60,4 @@ export const deleteNotification = async (
     throw e;
   }
 };
+

@@ -8,24 +8,41 @@ import Message from '../components/Message';
 import AutoResizeTextarea from '../components/MessageInput';
 import { MessageEntity } from '../types/MessageEntity';
 import lastMessageScroll from '../hooks/scroll-to-last-msg';
+import { NotificationEntity } from '../types/NotificationEntity';
+import { UserContextType } from '../types/UserContextType';
+
+type PhoneNumber = {
+  phone: number;
+};
 
 const Messenger = () => {
-  const { register, handleSubmit } = useForm();
-
   const navigate = useNavigate();
+
+  const { userData } = useContext(UserContext) as UserContextType;
+  if (userData === null) {
+    useEffect(() => {
+      navigate('/')
+    }, [])
+    return;
+  };
+
+  const { register, handleSubmit } = useForm<PhoneNumber>();
 
   const [message, setMessage] = useState('');
 
   const [chat, setChat] = useState<MessageEntity[]>([]);
 
-  const [phone, setPhone] = useState();
-  // @ts-ignore
-  const { userData } = useContext(UserContext);
+  const [phoneNumber, setPhoneNumber] = useState<number | null>(null);
+
+  useEffect(() => {
+    lastMessageScroll('last-mess');
+  }, [chat]);
 
   const handleSend = async () => {
     try {
-      // @ts-ignore
-      const chatId = `${phone.phone}@c.us`;
+      if (!phoneNumber) return;
+
+      const chatId = `${phoneNumber}@c.us`;
       await sendMessage(
         { chatId, message },
         userData.idInstance,
@@ -45,17 +62,18 @@ const Messenger = () => {
 
   const notifications = async () => {
     try {
-      const data = await receiveNotification(
+      const data: NotificationEntity = await receiveNotification(
         userData.idInstance,
         userData.apiTokenInstance,
       );
 
       if (data && data.body.typeWebhook === 'incomingMessageReceived') {
-        const text = data.body.messageData?.textMessageData?.textMessage;
-        const sender = data.body.senderData?.senderName;
+        // const text = data.body.messageData?.textMessageData?.textMessage;
+        const text = data.body.messageData.textMessageData.textMessage;
+        const sender = data.body.senderData.senderName;
 
         setChat((prevChat) => [
-          { textMessage: text, sender: sender },
+          { textMessage: text, senderName: sender },
           ...prevChat,
         ]);
       }
@@ -70,31 +88,24 @@ const Messenger = () => {
     }
   };
 
-  // @ts-ignore
-  const onSubmit = (data) => {
-    setPhone(data);
+  const onSubmit = (data: PhoneNumber ) => {
+    setPhoneNumber(data.phone);
+
     setChat([]);
   };
 
   useEffect(() => {
-    if (userData === null) navigate('/');
-
     const interval = setInterval(notifications, 5000);
     return () => clearInterval(interval);
   });
-
-  useEffect(() => {
-    lastMessageScroll('last-mess');
-  }, [chat]);
 
   return (
     <main
       className={
         'w-[100vw] h-[100vh] flex items-center justify-center flex-col bg-green-200 gap-[20px]'
       }>
-      {phone && (
-        // @ts-ignore
-        <h1 className={'text-[20px] text-green-700'}>Contact: {phone.phone}</h1>
+      {phoneNumber && (
+        <h1 className={'text-[20px] text-green-700'}>Contact: {phoneNumber}</h1>
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <input
