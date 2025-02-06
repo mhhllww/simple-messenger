@@ -44,7 +44,7 @@ const Messenger = () => {
     try {
       if (!phoneNumber) return;
 
-      const chatId = `${phoneNumber}@c.us`;
+      const chatId = `7${phoneNumber}@c.us`;
       await sendMessage(
         { chatId, message },
         userData.idInstance,
@@ -108,19 +108,22 @@ const Messenger = () => {
         'w-[100vw] h-[100vh] flex items-center justify-center flex-col bg-green-200 gap-[20px]'
       }>
       {phoneNumber && (
-        <h1 className={'text-[20px] text-green-700'}>Contact: {phoneNumber}</h1>
+        <h1 className={'text-[20px] text-green-700'}>Contact: 7{phoneNumber}</h1>
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
+        <label className={'relative fixed left-[25px]'}>+7</label>
         <input
-          className={'bg-white text-green-900 p-[10px] rounded-xl border border-green-500 border-2'}
+          className={'bg-white text-green-900 p-[10px_25px] w-[165px] rounded-xl border border-green-500 border-2'}
           {...register('phone', {
             required: true,
-            pattern: /^7\d{10}$/,
-            maxLength: 11,
+            pattern: /^\d{10}$/,
+            maxLength: 10,
           })}
-          placeholder={'Enter phone'}
+          onChange={(e) => {
+            e.target.value = e.target.value.slice(0, 10);
+          }}
           type="number" />
-        <RoundedButton text={'Add chat'}/>
+        <RoundedButton text={'Add chat'} />
       </form>
 
       <section className={'w-[500px] bg-green-100 rounded-2xl'}>
